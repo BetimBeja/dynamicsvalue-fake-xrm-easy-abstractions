@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   sonar:
@@ -89,7 +89,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"DynamicsValue_fake-xrm-easy-abstractions" /o:"dynamicsvalue" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"' /d:sonar.coverage.exclusions='"tests/**/**"'
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{github.repository_owner}}_fake-xrm-easy-abstractions" /o:"${{github.repository_owner}}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"' /d:sonar.coverage.exclusions='"tests/**/**"'
           .\build.ps1 -configuration FAKE_XRM_EASY_9 -targetFrameworks 'all'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
@@ -114,21 +114,14 @@ jobs:
       - name: Build
         run: pwsh ./build.ps1 -targetFrameworks 'all'
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Pack
         run: pwsh ./pack-src.ps1 -targetFrameworks 'all'
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Push Src
         run: nuget.exe push .\nupkgs\FakeXrmEasy.Abstractions.*.nupkg -Source ${{ env.source-url }} -ApiKey ${{ secrets.NUGET_API_KEY }} 
-
-
-
-    
-    
-    
-    
